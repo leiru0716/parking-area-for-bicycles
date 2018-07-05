@@ -13,7 +13,7 @@
 
 	データベースの構造は以下の通り
 
-	| Field       | Type         | Null | Key | Default | Extra |
+| Field       | Type         | Null | Key | Default | Extra |
 |-------------|--------------|------|-----|---------|-------|
 | id          | int(11)      | NO   | PRI | NULL    |       |
 | latitude    | varchar(10)  | YES  |     | NULL    |       |
