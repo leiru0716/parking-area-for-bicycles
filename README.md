@@ -30,3 +30,28 @@
 | remarks     | varchar(50)  | YES  |     | NULL    |       |
 | link        | varchar(50)  | YES  |     | NULL    |       |
 
+
+
+- データベースの文字コードをutf-8に変更する  
+	my.cnfを/etcの場所に上書きしてください  
+
+
+
+-
+-
+-
+-
+-
+-
+
+
+
+
+
+
+
+
+
+
+
+
