@@ -4,24 +4,64 @@
 <head>
 <meta http-equiv="Content-type" content="text/html; charset=utf-8">
 <title>phpチャット</title>
+<script>
+    // Geolocation APIに対応している
+//    if (navigator.geolocation) {
+//      alert("この端末では位置情報が取得できます");
+    // Geolocation APIに対応していない
+//    } else {
+//      alert("この端末では位置情報が取得できません");
+//    }
+
+    // 現在地取得処理
+    function getPosition() {
+      // 現在地を取得
+      navigator.geolocation.getCurrentPosition(
+        // 取得成功した場合
+        function(position) {
+            	document.getElementById("lat").value = position.coords.latitude;
+		document.getElementById("lon").value = position.coords.longitude;
+		//alert("緯度:"+position.coords.latitude+",経度"+position.coords.longitude);
+        },
+        // 取得失敗した場合
+        function(error) {
+          switch(error.code) {
+            case 1: //PERMISSION_DENIED
+              alert("位置情報の利用が許可されていません");
+              break;
+            case 2: //POSITION_UNAVAILABLE
+              alert("現在位置が取得できませんでした");
+              break;
+            case 3: //TIMEOUT
+              alert("タイムアウトになりました");
+              break;
+            default:
+              alert("その他のエラー(エラーコード:"+error.code+")");
+              break;
+          }
+        }
+      );
+    }
+  </script>
+
 </head>
 <body bgcolor="#ffffff">
 <h1>場所追加ページ</h1>
 <form name="add_place" method="POST" action="add.php">
 
 id：<input type="text" size=10 name="id"><br>
-latitude：<input type="text" size=30 name="latitude"><br>
-longitude：<input type="text" size=30 name="longitude"><br>
-genre：<input type="text" size=30 name="genre"><br>
-name：<input type="text" size=30 name="name"><br>
-outline：<input type="text" size=30 name="outline"><br>
-postalcode：<input type="text" size=30 name="postalcode"><br>
-address：<input type="text" size=30 name="phonenumber"><br>
-phonenumber：<input type="text" size=30 name="opentime"><br>
-opentime：<input type="text" size=30 name="closingday"><br>
-closingday：<input type="text" size=30 name="price"><br>
-remarks：<input type="text" size=30 name="remarks"><br>
-link：<input type="text" size=30 name="link"><br>
+緯度：<input type="text" size=30 name="latitude"><br>
+経尾：<input type="text" size=30 name="longitude"><br>
+ジャンル：<input type="text" size=30 name="genre"><br>
+名称：<input type="text" size=30 name="name"><br>
+概略：<input type="text" size=30 name="outline"><br>
+郵便番号：<input type="text" size=30 name="postalcode"><br>
+住所：<input type="text" size=30 name="phonenumber"><br>
+電話番号：<input type="text" size=30 name="opentime"><br>
+開館時間：<input type="text" size=30 name="closingday"><br>
+休館時間：<input type="text" size=30 name="price"><br>
+備考：<input type="text" size=30 name="remarks"><br>
+リンク：<input type="text" size=30 name="link"><br>
 
 <input type="submit" value="送信"><br><br>
 <?php
@@ -42,5 +82,13 @@ if(!empty($_POST['id'])){
 }
 ?>
 </form><hr>
+
+<br>
+<!--フォームの中で位置情報が取得できなかったんで、泣く泣くここに位置情報を取得するボタンを配置しました-->
+<button onclick="getPosition();">位置情報を取得する</button>
+<br>
+現在の緯度：<input id="lat">
+<br>
+現在の経度：<input id="lon">
 </body>
 </html>
