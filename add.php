@@ -9,21 +9,21 @@
 <h1>場所追加ページ</h1>
 <form name="add_place" method="POST" action="add.php">
 
-id：<input type="text" size=10 name="id">
-latitude：<input type="text" size=30 name="latitude">
-longitude：<input type="text" size=30 name="longitude">
-genre：<input type="text" size=30 name="genre">
-name：<input type="text" size=30 name="name">
-outline：<input type="text" size=30 name="outline">
-postalcode：<input type="text" size=30 name="postalcode">
-address：<input type="text" size=30 name="phonenumber">
-phonenumber：<input type="text" size=30 name="opentime">
-opentime：<input type="text" size=30 name="closingday">
-closingday：<input type="text" size=30 name="price">
-remarks：<input type="text" size=30 name="remarks">
-link：<input type="text" size=30 name="link">
+id：<input type="text" size=10 name="id"><br>
+latitude：<input type="text" size=30 name="latitude"><br>
+longitude：<input type="text" size=30 name="longitude"><br>
+genre：<input type="text" size=30 name="genre"><br>
+name：<input type="text" size=30 name="name"><br>
+outline：<input type="text" size=30 name="outline"><br>
+postalcode：<input type="text" size=30 name="postalcode"><br>
+address：<input type="text" size=30 name="phonenumber"><br>
+phonenumber：<input type="text" size=30 name="opentime"><br>
+opentime：<input type="text" size=30 name="closingday"><br>
+closingday：<input type="text" size=30 name="price"><br>
+remarks：<input type="text" size=30 name="remarks"><br>
+link：<input type="text" size=30 name="link"><br>
 
-<input type="submit" value="送信"><br>
+<input type="submit" value="送信"><br><br>
 <?php
 
 /* 投稿があった場合、データベースにデータを挿入 */
