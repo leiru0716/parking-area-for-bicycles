@@ -12,6 +12,8 @@
   },
   "dependencies": {
     "nuxt": "^1.0.0",
+    "nuxt-google-maps-module": "^1.6.0",
+    "scriptjs": "^2.5.8",
     "vuetify": "^1.0.0"
   },
   "devDependencies": {

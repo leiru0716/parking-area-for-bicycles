@@ -1,15 +1,26 @@
 <template>
   <v-layout>
     <v-flex text-xs-center>
-      <img src="/v.png" alt="Vuetify.js" class="mb-5">
-      <blockquote class="blockquote">
-        &#8220;First, solve the problem. Then, write the code.&#8221;
-        <footer>
-          <small>
-            <em>&mdash;John Johnson</em>
-          </small>
-        </footer>
-      </blockquote>
+      <Map></Map>
+      aa
     </v-flex>
   </v-layout>
 </template>
+
+
+<script>
+  import gMap from '~/components/Map'
+
+  export default {
+    data () {
+      return {
+        value: 0,
+        e1: 0,
+        fillColor: '#000000'
+      }
+    },
+    components: {
+      gMap
+    }
+  }
+</script>
