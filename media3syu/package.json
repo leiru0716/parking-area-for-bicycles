@@ -11,9 +11,11 @@
     "generate": "nuxt generate"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "nuxt": "^1.0.0",
     "nuxt-google-maps-module": "^1.6.0",
     "scriptjs": "^2.5.8",
+    "vue2-google-maps": "^0.10.1",
     "vuetify": "^1.0.0"
   },
   "devDependencies": {

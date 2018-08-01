@@ -1,30 +1,55 @@
 <template>
-  <v-layout column justify-center align-center>
-    <v-flex xs12 sm8 md6>
-      <div class="text-xs-center">
-        <img src="/v.png" alt="Vuetify.js" class="mb-5" />
-      </div>
-      <v-card>
-        <v-card-title class="headline">Welcome to the Vuetify + Nuxt.js template</v-card-title>
-        <v-card-text>
-          <p>Vuetify is a progressive Material Design component framework for Vue.js. It was designed to empower developers to create amazing applications.</p>
-          <p>For more information on Vuetify, check out the <a href="https://vuetifyjs.com" target="_blank">documentation</a>.</p>
-          <p>If you have questions, please join the official <a href="https://chat.vuetifyjs.com/" target="_blank" title="chat">discord</a>.</p>
-          <p>Find a bug? Report it on the github <a href="https://github.com/vuetifyjs/vuetify/issues" target="_blank" title="contribute">issue board</a>.</p>
-          <p>Thank you for developing with Vuetify and I look forward to bringing more exciting features in the future.</p>
-          <div class="text-xs-right">
-            <em><small>&mdash; John Leider</small></em>
-          </div>
-          <hr class="my-3">
-          <a href="https://nuxtjs.org/" target="_blank">Nuxt Documentation</a>
-          <br>
-          <a href="https://github.com/nuxt/nuxt.js" target="_blank">Nuxt GitHub</a>
-        </v-card-text>
-        <v-card-actions>
-          <v-spacer></v-spacer>
-          <v-btn color="primary" flat nuxt to="/inspire">Continue</v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-flex>
-  </v-layout>
+<GmapMap
+  :center="center"
+  :zoom="12"
+  map-type-id="terrain"
+  style="height: 100%"
+>
+aa
+  <GmapMarker
+    :key="index"
+    v-for="(maker, index) in markers"
+    :position="maker.latLng"
+    :clickable="true"
+    :draggable="false"
+    @click="maker.ifw = !maker.ifw"
+  >
+    <gmap-info-window :opened="maker.ifw">{{maker.ifwtext}}</gmap-info-window>
+  </GmapMarker>
+</GmapMap>
 </template>
+<script>
+import axios from 'axios'
+// let data
+let parkingData
+// data = JSON.parse('{"id":"1414","0":"1414","latitude":"36.5806","1":"36.5806","longitude":"136.648722","2":"136.648722","genre":"駐車場・駐輪場","3":"駐車場・駐輪場","name":"駐車場","4":"駐車場","outline":"","5":"","postalcode":"","6":"","address":"","7":"","phonenumber":"","8":"","opentime":"金沢駅西口時計駐車場","9":"金沢駅西口時計駐車場","closingday":"収容台数：1500台","10":"収容台数：1500台","price":"920-0031","11":"920-0031","remarks":"金沢市広岡1-401","12":"金沢市広岡1-401","link":"076-263-5151","13":"076-263-5151"}')
+
+export default {
+  data () {
+    return {
+      center: { lat: 36.57, lng: 136.64 },
+      markers: [
+      //   {
+      //     latLng: { lat: Number(data.latitude), lng: Number(data.longitude) },
+      //     ifw: false,
+      //     ifwtext: ''
+      //   }
+      ]
+    }
+  },
+  mounted () {
+    // console.log(data)
+    axios.get('http://192.168.207.133').then(response => {
+      parkingData = response.data
+      for (let i = 0; i < parkingData.length; i++) {
+        this.markers.push({
+          latLng: { lat: Number(parkingData[i][0].latitude), lng: Number(parkingData[i][0].longitude) },
+          ifw: false,
+          ifwtext: parkingData[i][0].opentime + '\n ' + parkingData[i][0].closingday})
+        // console.log(parkingData[i][0])
+      }
+      // console.log(parkingData[0][0].latitude)
+    })
+  }
+}
+</script>
