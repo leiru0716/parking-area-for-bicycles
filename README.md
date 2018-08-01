@@ -37,7 +37,13 @@
 | remarks     | varchar(50)  | YES  |     | NULL    |       |
 | link        | varchar(50)  | YES  |     | NULL    |       |
   
-
+ フロント
+ 
+ cd media3syu
+ npm i
+ npm run dev
+ 
+ http://localhost:3000
  
 
 
