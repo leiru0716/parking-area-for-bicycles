@@ -1,4 +1,5 @@
-<a href="add.php">場所追加ページ</a>
+<a href="add.php">場所追加ページ</a><br>
+<a href="update.php">場所変更ページ</a><br>
 
 <?php
 
@@ -63,11 +64,13 @@ function markerEvent(i) {
       infoWindow[i].open(map, marker[i]); // 吹き出しの表示
   });
 }
+
 </script>
 
 <div id="parkingmap" style="width:700px;height:400px;">
 
 </div>
+
 
 <script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBYLx1uVla1Ttt19Jp-k35yo8DoDB-DCI&callback=initMap">
 </script>
