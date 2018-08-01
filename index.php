@@ -1,11 +1,7 @@
 <a href="add.php">場所追加ページ</a><br>
 <a href="update.php">場所変更ページ</a><br>
 <a href="delete.php">場所削除ページ</a><br>
-<br>
-<span><input type="text" name="lat">lat</span>
-<br>
-<span><input type="text" name="lng">lng</span>
-<button onclick="MapAPItest()">経路探索開始</button>
+
 <?php
 
 $data = array();
@@ -71,6 +67,11 @@ var test=JSON.parse('<?php echo  $json_data; ?>');
 var map;
 var marker=[];
 var infoWindow=[];
+
+
+var ms_ll;
+var timer;
+var destinationMarker;
 function initMap() {
 	var DS = new google.maps.DirectionsService();
 	var DR = new google.maps.DirectionsRenderer();
@@ -82,87 +83,175 @@ function initMap() {
         },
         zoom: 12 // 地図のズームを指定
 	});
-
 	/* map を DirectionsRendererオブジェクトのsetMap()を使って関連付け */
-	DR.setMap(map);
+    DR.setMap(map);
+
+    map.addListener("mousedown",function(e){
+        timer=new Date().getTime();
+        ms_ll=e.latLng;
+        
+    });
+    map.addListener("mouseup",function(e){
+        if(timer){
+            var ms_ll_dist=getDistance(ms_ll.lat(),
+                    ms_ll.lng(),
+                    e.latLng.lat(),
+                    e.latLng.lng());
+           if((new Date().getTime()-timer)>500 && ms_ll_dist.distance==0){
+                 destinationMarker.setVisible(!destinationMarker.getVisible());
+           }
+        }
+    });
 
 
     // マーカー毎の処理
- for (var i = 0; i < test.length; i++) {
+    for (var i = 0; i < test.length; i++) {
         markerLatLng = new google.maps.LatLng({lat: Number(test[i][0]['latitude']), lng: Number(test[i][0]['longitude'])}); // 緯度経度のデータ作成
         marker[i] = new google.maps.Marker({ // マーカーの追加
-         position: markerLatLng, // マーカーを立てる位置を指定
+            position: markerLatLng, // マーカーを立てる位置を指定
             map: map // マーカーを立てる地図を指定
-       });
- 
-     infoWindow[i] = new google.maps.InfoWindow({ // 吹き出しの追加
-         content: '<div class="parkingmap">' + 'id:' + test[i][0][0] + '<br>'+ 'lat:' + test[i][0][1] + '<br>' + 'lon:' + test[i][0][2] + '<br>'  + test[i][0][3] + '<br>' + test[i][0][4] + '<br>' + test[i][0][5] + '<br>' + test[i][0][6] + '<br>' + test[i][0][7] + '<br>' + test[i][0][8] + '<br>' + test[i][0][9] + '<br>' + test[i][0][10] + '<br>' + test[i][0][11] + '<br>' + test[i][0][12] + '<br>' + test[i][0][13] + '</div>' // 吹き出しに表示する内容
-       });
- 
-	markerEvent(i); // マーカーにクリックイベントを追加
+        });
+
+        infoWindow[i] = new google.maps.InfoWindow({ // 吹き出しの追加
+            content: '<div class="parkingmap">' + 'id:' + test[i][0][0] + '<br>'+ 'lat:' + test[i][0][1] + '<br>' + 'lon:' + test[i][0][2] + '<br>'  + test[i][0][3] + '<br>' + test[i][0][4] + '<br>' + test[i][0][5] + '<br>' + test[i][0][6] + '<br>' + test[i][0][7] + '<br>' + test[i][0][8] + '<br>' + test[i][0][9] + '<br>' + test[i][0][10] + '<br>' + test[i][0][11] + '<br>' + test[i][0][12] + '<br>' + test[i][0][13] + '</div>' // 吹き出しに表示する内容
+        });
+
+        markerEvent(i); // マーカーにクリックイベントを追加
+    }
+
+    document.getElementById("btn").onclick = function() {
+        /* 開始地点と目的地点、ルーティングの種類を設定 */
+        var from = new google.maps.LatLng( document.getElementById('lat').value, document.getElementById('lon').value );
+        var to = new google.maps.LatLng( document.getElementById('lat2').value, document.getElementById('lon2').value  );
+
+        var latlngs=Marker2LatLng(marker);
+        Nearest(to,latlngs)
+        .then(function(result){
+            console.log(result);
+            var request = {
+                origin: from,
+                destination: to,
+                waypoints: [{location: result[0].latlng}],
+                travelMode: google.maps.TravelMode.WALKING
+            };
+            DS.route(request, function(result, status) {
+                DR.setDirections(result);
+            });
+        },function(e){
+            console.log('error'+e);
+        });
+    }
+    
+
+    var destinationMarker=new google.maps.Marker({
+        position:new google.maps.LatLng(36.530612,136.627774),
+        title:"current position",
+        draggable:true,
+        animation: google.maps.Animation.DROP,
+	    label: {
+		    text: '目的',                          
+		    color: '#FFFFFF',                    
+		    fontSize: '11px'                     
+        },
+        zIndex: 500
+    });
+    destinationMarker.setMap(map);
+    var cpos_iw=new google.maps.InfoWindow({
+        content: "現在位置"
+    });
+    destinationMarker.addListener('dragend', function(e){
+        console.log("dragend")
+        if(destinationMarker.getVisible()){
+		    document.getElementById('lat2').value = e.latLng.lat();
+            document.getElementById('lon2').value = e.latLng.lng();
+        }
+	});
+    destinationMarker.setVisible(false);
 
 
-	document.getElementById("btn").onclick = function() {
-		/* 開始地点と目的地点、ルーティングの種類を設定 */
-		var from = new google.maps.LatLng( document.getElementById('lat').value, document.getElementById('lon').value );
-		var to = new google.maps.LatLng( document.getElementById('lat2').value, document.getElementById('lon2').value  );
-		var request = {
-			origin: from,
-				destination: to,
-				travelMode: google.maps.TravelMode.WALKING
-		};
-		DS.route(request, function(result, status) {
-			DR.setDirections(result);
-		});
-	}
 
- }
- 
+}
+function adddraggableMarker(){
+
 }
 // マーカーにクリックイベントを追加
 function markerEvent(i) {
     marker[i].addListener('click', function() { // マーカーをクリックしたとき
+        for(var j=0;j<infoWindow.length;j++) infoWindow[j].close();//全てのふきだしを非表示に
       infoWindow[i].open(map, marker[i]); // 吹き出しの表示
   });
 }
 
 function searchPcode() {
 	for(var i = 0;i <test.length;i++){
-		if(test[i][0]['postalcode']== document.getElementById('pcode').value){
-			marker[i].setVisible(true);
-		}
-		else{
-			marker[i].setVisible(false);
-		}
-	} 
+        var pcode=document.getElementById('pcode').value;
+        if(pcode.search(/\b...-\b..../)!=-1){
+            if(test[i][0]['postalcode']== pcode){
+                marker[i].setVisible(true);
+            }
+            else{
+                marker[i].setVisible(false);
+            }
+        }
+    }
+    searchOutline();
+    searchHours();
 }
 
 function resetPcode() {
-        for(var i = 0;i <test.length;i++){
-        	marker[i].setVisible(true);
-        } 
+    for(var i = 0;i <test.length;i++){
+        marker[i].setVisible(true);
+    } 
 }
-function MapAPItest(){
-    var cu=LocateCurrentPos();
-    console.log(cu);
-    if(cu==null){
-        var input_lat=Number(document.getElementsByName('lat')[0].value);
-        var input_lng=Number(document.getElementsByName('lng')[0].value);
-        console.log(input_lat+";"+input_lng);
-        cu=new google.maps.LatLng(input_lat,input_lng);
+function searchOutline(){
+    var val=document.getElementById('vtype').selectedIndex;
+    var vtype=document.getElementById('vtype').options[val].value;
+    var uppernum=document.getElementById('park_num').value;
+    var regex=new RegExp(vtype+"\\d+");
+    for(var i=0;i<test.length;i++){
+        if(marker[i].getVisible()){
+
+            var m_result=test[i][0]['outline'].match(regex);
+            if(m_result){
+                var num=m_result[0].match(/\d+/g);
+                if(Number(num[0])<uppernum){
+                    marker[i].setVisible(false);
+                }
+            }else{
+                marker[i].setVisible(false);
+            }
+
+        }
+
     }
-    var latlngs=Marker2LatLng(marker);
-    var ret;
-    var i=0;
-    Nearest(cu,latlngs)
-    .then(function(result){
-        console.log(result);
-        RouteSearch(map,cu,result);
-    },function(e){
-        console.log('error'+each);
-    });
 }
+function searchHours(){
+    var hours=document.getElementById('time').value;
+    for(var i=0;i<test.length;i++){
+        if(marker[i].getVisible()){
+            if(test[i][0]['opentime']!='終日'){
+                var split_time=test[i][0]['opentime'].split('〜');
+                var open=split_time[0].replace(/:/g,'');
+                var close=split_time[1].replace(/:/g,'');
+                var check=hours.replace(/:/g,'');
+                if(Number(open)>Number(check) || Number(check)>Number(close)){
+                    marker[i].setVisible(false);
+                }
+            }
+        }
+    }
+}
+
+
 </script>
+
+<select id="vtype">
+<option value="自転車">自転車</option>
+<option value="原付">原付</option>
+</select>
+<input id="park_num" type="number" value="0">台以上
+<br>
+<input type="time" id="time" />に営業中
 <br>
 <input id="pcode">
 <br>
@@ -188,10 +277,6 @@ function MapAPItest(){
 
 
 
-<script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBYLx1uVla1Ttt19Jp-k35yo8DoDB-DCI&callback=initMap">
+<script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC_cGsCdN3cJtnVFoOpOAvl6JV0iXaB96U&callback=initMap">
 </script>
 <script type="text/javascript" src="MapApi.js"></script>
-
-
-
-

@@ -75,11 +75,11 @@ function Nearest(basepos,latlngs){
                         "duration": duration
                     });
                 }
-                result_data.sort(function(a,b){
-                    if(a.distance.value>b.distance.value) return -1;
-                    if(a.distance.value<b.distance.value) return 1;
-                    return 0;
-                });
+                // result_data.sort(function(a,b){
+                //     if(a.distance.value>b.distance.value) return -1;
+                //     if(a.distance.value<b.distance.value) return 1;
+                //     return 0;
+                // });
                 
                 resolve(result_data);
             }else{
@@ -91,9 +91,11 @@ function Nearest(basepos,latlngs){
 function Marker2LatLng(marker){
     var pointLatLng=[];
     for(var i=0;i<marker.length;i++){
-        pointLatLng.push(marker[i].getPosition());
+        if(marker[i].getVisible())
+            pointLatLng.push(marker[i].getPosition());
 
     }
+    console.log(pointLatLng.length);
     return pointLatLng;
 }
 function LocateCurrentPos(){
