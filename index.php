@@ -40,7 +40,7 @@ function initMap() {
             lat: 36.530612, // 緯度
             lng: 136.627774 // 経度
         },
-        zoom: 15 // 地図のズームを指定
+        zoom: 12 // 地図のズームを指定
     });
 
     // マーカー毎の処理
@@ -66,8 +66,30 @@ function markerEvent(i) {
   });
 }
 
-</script>
+function searchPcode() {
+	for(var i = 0;i <test.length;i++){
+		if(test[i][0]['postalcode']== document.getElementById('pcode').value){
+			marker[i].setVisible(true);
+		}
+		else{
+			marker[i].setVisible(false);
+		}
+	} 
+}
 
+function resetPcode() {
+        for(var i = 0;i <test.length;i++){
+        	marker[i].setVisible(true);
+        } 
+}
+
+</script>
+<br>
+<input id="pcode">
+<br>
+<button onclick="searchPcode();">郵便番号で検索</button>
+<button onclick="resetPcode();">リセット</button>
+<br>
 <div id="parkingmap" style="width:700px;height:400px;">
 
 </div>
