@@ -1,10 +1,14 @@
 <template>
   <v-app>
     <v-toolbar fixed app >
-        <v-toolbar-title v-text="title"></v-toolbar-title>
+        <v-toolbar-title v-text="title" ></v-toolbar-title>
+        <v-btn icon href="/">
+        <v-icon>home</v-icon>
+      </v-btn>
       <v-spacer></v-spacer>
 
-      <v-btn icon >
+      <!-- <v-btn icon href="http://192.168.207.133/add.php"> -->
+      <v-btn icon href="/addmaker">
         <v-icon>add</v-icon>
       </v-btn>
     </v-toolbar>
