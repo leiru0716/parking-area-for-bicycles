@@ -39,7 +39,8 @@ export default {
   },
   mounted () {
     // console.log(data)
-    axios.get('http://192.168.207.133').then(response => {
+    // axios.get('http://192.168.207.133').then(response => {
+    axios.get('localhost').then(response => {
       parkingData = response.data
       for (let i = 0; i < parkingData.length; i++) {
         this.markers.push({
