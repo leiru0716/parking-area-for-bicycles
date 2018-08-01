@@ -7,7 +7,7 @@
 	- データベースの文字コードをutf-8に変更する  
 		my.cnfを/etcの場所に上書きしてください  
 
-    - index.php add.phpを/var/www/htmlにコピーする  
+    - index.php add.php update.php delete.phpを/var/www/htmlにコピーする  
 
 
 	- MariaDBにログインした後下記コマンドを打つ   
