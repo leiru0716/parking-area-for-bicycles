@@ -14,7 +14,11 @@ aa
     :draggable="false"
     @click="maker.ifw = !maker.ifw"
   >
-    <gmap-info-window :opened="maker.ifw">{{maker.ifwtext}}</gmap-info-window>
+    <gmap-info-window 
+      :opened="maker.ifw" >
+      <!-- {{maker.ifwtext}} -->
+      <h3>{{maker.opentime}}</h3>{{maker.closingday}}<br>{{maker.genre}}<br>{{maker.price}}<br>{{maker.remarks}}
+    </gmap-info-window>
   </GmapMarker>
 </GmapMap>
 </template>
@@ -39,15 +43,25 @@ export default {
   },
   mounted () {
     // console.log(data)
-    // axios.get('http://192.168.207.133').then(response => {
-    axios.get('localhost').then(response => {
+    // axios.get('http://192.168.207.133/index2.php').then(response => {
+    axios.get('localhost/index2.php').then(response => {
       parkingData = response.data
       for (let i = 0; i < parkingData.length; i++) {
         this.markers.push({
           latLng: { lat: Number(parkingData[i][0].latitude), lng: Number(parkingData[i][0].longitude) },
           ifw: false,
-          ifwtext: parkingData[i][0].opentime + '\n ' + parkingData[i][0].closingday})
-        // console.log(parkingData[i][0])
+          ifwtext: parkingData[i][0].opentime + ' \n' + parkingData[i][0].closingday,
+          genre: parkingData[i][0].genre,
+          name: parkingData[i][0].name,
+          outline: parkingData[i][0].outline,
+          postalcode: parkingData[i][0].postalcode,
+          phonenumber: parkingData[i][0].phonenumber,
+          opentime: parkingData[i][0].opentime,
+          closingday: parkingData[i][0].closingday,
+          price: parkingData[i][0].price,
+          remarks: parkingData[i][0].remarks,
+          link: parkingData[i][0].link })
+        console.log(parkingData[i][0])
       }
       // console.log(parkingData[0][0].latitude)
     })

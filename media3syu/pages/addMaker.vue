@@ -89,7 +89,7 @@ export default {
       maker: { latLng: { lat: null, lng: null } },
       valid: true,
       id: '',
-      latitude: 'aa',
+      latitude: '',
       longitude: '',
       genre: '',
       name: '',
@@ -140,7 +140,7 @@ export default {
         params.append('price', this.price)
         params.append('remarks', this.remarks)
         params.append('link', this.link)
-        axios.post('http://192.168.207.133/add.php', params).then(response => console.log(response))
+        axios.post('http://192.168.207.133/addmaker.php', params).then(response => console.log(response))
       }
     },
     clear () {
