@@ -1,5 +1,6 @@
 <a href="add.php">場所追加ページ</a><br>
 <a href="update.php">場所変更ページ</a><br>
+<a href="delete.php">場所削除ページ</a><br>
 
 <?php
 
