@@ -1,7 +1,11 @@
 <a href="add.php">場所追加ページ</a><br>
 <a href="update.php">場所変更ページ</a><br>
 <a href="delete.php">場所削除ページ</a><br>
-
+<br>
+<span><input type="text" name="lat">lat</span>
+<br>
+<span><input type="text" name="lng">lng</span>
+<button onclick="MapAPItest()">経路探索開始</button>
 <?php
 
 $data = array();
@@ -82,7 +86,26 @@ function resetPcode() {
         	marker[i].setVisible(true);
         } 
 }
-
+function MapAPItest(){
+    var cu=LocateCurrentPos();
+    console.log(cu);
+    if(cu==null){
+        var input_lat=Number(document.getElementsByName('lat')[0].value);
+        var input_lng=Number(document.getElementsByName('lng')[0].value);
+        console.log(input_lat+";"+input_lng);
+        cu=new google.maps.LatLng(input_lat,input_lng);
+    }
+    var latlngs=Marker2LatLng(marker);
+    var ret;
+    var i=0;
+    Nearest(cu,latlngs)
+    .then(function(result){
+        console.log(result);
+        RouteSearch(map,cu,result);
+    },function(e){
+        console.log('error'+each);
+    });
+}
 </script>
 <br>
 <input id="pcode">
@@ -97,7 +120,7 @@ function resetPcode() {
 
 <script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBYLx1uVla1Ttt19Jp-k35yo8DoDB-DCI&callback=initMap">
 </script>
-
+<script type="text/javascript" src="MapApi.js"></script>
 
 
 
