@@ -24,6 +24,39 @@ $json_data = json_encode($data,JSON_UNESCAPED_UNICODE);
 ?>
 
 <script>
+// 現在地取得処理
+    function getPosition() {
+      // 現在地を取得
+      navigator.geolocation.getCurrentPosition(
+        // 取得成功した場合
+        function(position) {
+                document.getElementById("lat").value = position.coords.latitude;
+                document.getElementById("lon").value = position.coords.longitude;
+                //alert("緯度:"+position.coords.latitude+",経度"+position.coords.longitude);
+        },
+        // 取得失敗した場合
+        function(error) {
+          switch(error.code) {
+            case 1: //PERMISSION_DENIED
+              alert("位置情報の利用が許可されていません");
+              break;
+            case 2: //POSITION_UNAVAILABLE
+              alert("現在位置が取得できませんでした");
+              break;
+            case 3: //TIMEOUT
+              alert("タイムアウトになりました");
+              break;
+            default:
+              alert("その他のエラー(エラーコード:"+error.code+")");
+              break;
+          }
+        }
+      );
+    }
+
+
+
+
 // ex. 
 // test[0][0] 
 // = {0: "1414", 1: "36.5806", 2: "136.648722", 3: "駐車場・駐輪場", 4: "駐車場", 5: "", 6: "", 7: "", 8: "", 9: "金沢駅西口時計駐車場", 10: "収容台数：1500台", 11: "920-0031", 12: "金沢市広岡1-401", 13: "076-263-5151", id: "1414", latitude: "36.5806", longitude: "136.648722", genre: "駐車場・駐輪場", name: "駐車場", …}
@@ -35,13 +68,20 @@ var map;
 var marker=[];
 var infoWindow=[];
 function initMap() {
-    map = new google.maps.Map(document.getElementById('parkingmap'), { // #sampleに地図を埋め込む
+	var DS = new google.maps.DirectionsService();
+	var DR = new google.maps.DirectionsRenderer();
+
+	map = new google.maps.Map(document.getElementById('parkingmap'), { // #sampleに地図を埋め込む
         center: { // 地図の中心を指定
             lat: 36.530612, // 緯度
             lng: 136.627774 // 経度
         },
         zoom: 12 // 地図のズームを指定
-    });
+	});
+
+	/* map を DirectionsRendererオブジェクトのsetMap()を使って関連付け */
+	DR.setMap(map);
+
 
     // マーカー毎の処理
  for (var i = 0; i < test.length; i++) {
@@ -52,10 +92,26 @@ function initMap() {
        });
  
      infoWindow[i] = new google.maps.InfoWindow({ // 吹き出しの追加
-         content: '<div class="parkingmap">' + 'id:' + test[i][0][0] + '<br>' + test[i][0][3] + '<br>' + test[i][0][4] + '<br>' + test[i][0][5] + '<br>' + test[i][0][6] + '<br>' + test[i][0][7] + '<br>' + test[i][0][8] + '<br>' + test[i][0][9] + '<br>' + test[i][0][10] + '<br>' + test[i][0][11] + '<br>' + test[i][0][12] + '<br>' + test[i][0][13] + '</div>' // 吹き出しに表示する内容
+         content: '<div class="parkingmap">' + 'id:' + test[i][0][0] + '<br>'+ 'lat:' + test[i][0][1] + '<br>' + 'lon:' + test[i][0][2] + '<br>'  + test[i][0][3] + '<br>' + test[i][0][4] + '<br>' + test[i][0][5] + '<br>' + test[i][0][6] + '<br>' + test[i][0][7] + '<br>' + test[i][0][8] + '<br>' + test[i][0][9] + '<br>' + test[i][0][10] + '<br>' + test[i][0][11] + '<br>' + test[i][0][12] + '<br>' + test[i][0][13] + '</div>' // 吹き出しに表示する内容
        });
  
-     markerEvent(i); // マーカーにクリックイベントを追加
+	markerEvent(i); // マーカーにクリックイベントを追加
+
+
+	document.getElementById("btn").onclick = function() {
+		/* 開始地点と目的地点、ルーティングの種類を設定 */
+		var from = new google.maps.LatLng( document.getElementById('lat').value, document.getElementById('lon').value );
+		var to = new google.maps.LatLng( document.getElementById('lat2').value, document.getElementById('lon2').value  );
+		var request = {
+			origin: from,
+				destination: to,
+				travelMode: google.maps.TravelMode.WALKING
+		};
+		DS.route(request, function(result, status) {
+			DR.setDirections(result);
+		});
+	}
+
  }
  
 }
@@ -93,6 +149,20 @@ function resetPcode() {
 <div id="parkingmap" style="width:700px;height:400px;">
 
 </div>
+<br>
+<!--フォームの中で位置情報が取得できなかったんで、泣く泣くここに位置情報を取得するボタンを配置しました-->
+<button onclick="getPosition();">位置情報を取得する</button>
+<br>
+現在の緯度：<input id="lat">
+<br>
+現在の経度：<input id="lon">
+<br>
+<br>
+目的の緯度：<input id="lat2">
+<br>
+目的の経度：<input id="lon2">
+<br><input type="button" id="btn" value="ルートを表示">
+
 
 
 <script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDBYLx1uVla1Ttt19Jp-k35yo8DoDB-DCI&callback=initMap">
