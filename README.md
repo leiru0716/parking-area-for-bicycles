@@ -7,7 +7,7 @@
 	- データベースの文字コードをutf-8に変更する  
 		my.cnfを/etcの場所に上書きしてください  
 
-    - index.php add.php update.php delete.phpを/var/www/htmlにコピーする  
+    - index.php add.php update.php delete.php MapApi.js を/var/www/htmlにコピーする  
 
 
 	- MariaDBにログインした後下記コマンドを打つ   
@@ -36,14 +36,7 @@
 | price       | varchar(100) | YES  |     | NULL    |       |
 | remarks     | varchar(50)  | YES  |     | NULL    |       |
 | link        | varchar(50)  | YES  |     | NULL    |       |
-  
- フロント
  
- cd media3syu
- npm i
- npm run dev
- 
- http://localhost:3000
  
 PCでの位置情報はセキュリティの都合上HTTPでは使用できないため、利用する場合は必ずHTTPSで接続しなければならない
 
