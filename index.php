@@ -72,6 +72,7 @@ var infoWindow=[];
 var ms_ll;
 var timer;
 var destinationMarker;
+var cpos_iw;
 function initMap() {
 	var DS = new google.maps.DirectionsService();
 	var DR = new google.maps.DirectionsRenderer();
@@ -86,22 +87,7 @@ function initMap() {
 	/* map を DirectionsRendererオブジェクトのsetMap()を使って関連付け */
     DR.setMap(map);
 
-    map.addListener("mousedown",function(e){
-        timer=new Date().getTime();
-        ms_ll=e.latLng;
-        
-    });
-    map.addListener("mouseup",function(e){
-        if(timer){
-            var ms_ll_dist=getDistance(ms_ll.lat(),
-                    ms_ll.lng(),
-                    e.latLng.lat(),
-                    e.latLng.lng());
-           if((new Date().getTime()-timer)>500 && ms_ll_dist.distance==0){
-                 destinationMarker.setVisible(!destinationMarker.getVisible());
-           }
-        }
-    });
+
 
 
     // マーカー毎の処理
@@ -149,15 +135,15 @@ function initMap() {
         draggable:true,
         animation: google.maps.Animation.DROP,
 	    label: {
-		    text: '目的',                          
+		    text: '目',                          
 		    color: '#FFFFFF',                    
 		    fontSize: '11px'                     
         },
         zIndex: 500
     });
     destinationMarker.setMap(map);
-    var cpos_iw=new google.maps.InfoWindow({
-        content: "現在位置"
+    cpos_iw=new google.maps.InfoWindow({
+        content: "目的地"
     });
     destinationMarker.addListener('dragend', function(e){
         console.log("dragend")
@@ -165,15 +151,37 @@ function initMap() {
 		    document.getElementById('lat2').value = e.latLng.lat();
             document.getElementById('lon2').value = e.latLng.lng();
         }
-	});
+    });
+    
     destinationMarker.setVisible(false);
 
-
+    map.addListener("mousedown",function(e){
+        timer=new Date().getTime();
+        ms_ll=e.latLng;
+        
+    });
+    map.addListener("mouseup",function(e){
+        if(timer){
+            var ms_ll_dist=getDistance(ms_ll.lat(),
+                    ms_ll.lng(),
+                    e.latLng.lat(),
+                    e.latLng.lng());
+           if((new Date().getTime()-timer)>500 && ms_ll_dist.distance==0){
+                if(destinationMarker.getVisible()){
+                    cpos_iw.close();
+                    destinationMarker.setVisible(false);
+                }else{
+                    destinationMarker.setPosition(e.latLng);
+                    destinationMarker.setAnimation(google.maps.Animation.DROP);
+                    cpos_iw.open(map,destinationMarker);
+                    destinationMarker.setVisible(true);
+                }
+           }
+        }
+    });
 
 }
-function adddraggableMarker(){
 
-}
 // マーカーにクリックイベントを追加
 function markerEvent(i) {
     marker[i].addListener('click', function() { // マーカーをクリックしたとき
@@ -183,6 +191,7 @@ function markerEvent(i) {
 }
 
 function searchPcode() {
+    resetPcode();
 	for(var i = 0;i <test.length;i++){
         var pcode=document.getElementById('pcode').value;
         if(pcode.search(/\b...-\b..../)!=-1){
